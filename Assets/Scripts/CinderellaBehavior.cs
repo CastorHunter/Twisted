@@ -20,7 +20,7 @@ public class Cinderella : CharacterBehavior
     public override void ReceiveDamage(int damage)
     {
         Life -= damage;
-        GameManager.playerHealth.text = "Health : " + Life;
+        GameManager.playerHealth.text = "Player health : " + Life;
         if (Life <= 0)
         {
             GameManager.EndGame(false);

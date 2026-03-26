@@ -19,6 +19,7 @@ public class EnemyBasBehavior : CharacterBehavior
         if ((Math.Abs(CharacterCase._column - targetCase._column) == 1 || Math.Abs(CharacterCase._row - targetCase._row) == 1) && !(Math.Abs(CharacterCase._column - targetCase._column) >= 1 && Math.Abs(CharacterCase._row - targetCase._row) >= 1))
         {
             player.ReceiveDamage(Damage);
+            GameManager.enemyHealth.text = "Enemy health : " + Life;
             StartCoroutine(ShowAttackZone(targetCase));
         }
     }

@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<GameObject> Heroes, Enemies;
 
     [SerializeField] private GameObject EndTurnButton;
-    public TextMeshProUGUI playerHealth, actionPoints, victoryShowUp;
+    public TextMeshProUGUI playerHealth, enemyHealth, actionPoints, victoryShowUp;
     [SerializeField] private Image blurImage;
     
     private Case _goalCase;
@@ -43,7 +43,8 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("No heroes found");
         }
-        playerHealth.text = ("Health : " + Heroes[0].GetComponent<CharacterBehavior>().Life);
+        enemyHealth.text = ("Enemy health : " + Enemies[0].GetComponent<CharacterBehavior>().Life);
+        playerHealth.text = ("Player health : " + Heroes[0].GetComponent<CharacterBehavior>().Life);
         actionPoints.text = 1.ToString();
         victoryShowUp.enabled = false;
         blurImage.enabled = false;
@@ -117,7 +118,6 @@ public class GameManager : MonoBehaviour
     {
         if (victory)
         {
-            print("Victory");
             _gameEnded = true;
             victoryShowUp.enabled = true;
             blurImage.enabled = true;
@@ -125,7 +125,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            print("Defeat");
             _gameEnded = true;
             victoryShowUp.enabled = true;
             blurImage.enabled = true;
