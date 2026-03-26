@@ -1,8 +1,14 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class EnemyBasBehavior : CharacterBehavior
 {
+    [SerializeField]
+    private Material DamageZoneMaterial;
+    
+    private Material _stockMaterial;
+    
     private void Start()
     {
         Movement += 1;
@@ -13,6 +19,7 @@ public class EnemyBasBehavior : CharacterBehavior
         if ((Math.Abs(CharacterCase._column - targetCase._column) == 1 || Math.Abs(CharacterCase._row - targetCase._row) == 1) && !(Math.Abs(CharacterCase._column - targetCase._column) >= 1 && Math.Abs(CharacterCase._row - targetCase._row) >= 1))
         {
             player.ReceiveDamage(Damage);
+            StartCoroutine(ShowAttackZone(targetCase));
         }
     }
 
@@ -34,4 +41,12 @@ public class EnemyBasBehavior : CharacterBehavior
      }
      return false;
  }
+    
+    private IEnumerator ShowAttackZone(Case caseToChange)
+    {
+        _stockMaterial = caseToChange.GetComponent<MeshRenderer>().material;
+        caseToChange.GetComponent<MeshRenderer>().material = DamageZoneMaterial;
+        yield return new WaitForSeconds(0.5f);
+        caseToChange.GetComponent<MeshRenderer>().material = _stockMaterial;
+    }
 }

@@ -10,11 +10,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<GameObject> Heroes, Enemies;
 
     [SerializeField] private GameObject EndTurnButton;
-    public TextMeshProUGUI playerHealth, actionPoints;
+    public TextMeshProUGUI playerHealth, actionPoints, victoryShowUp;
+    [SerializeField] private Image blurImage;
     
     private Case _goalCase;
     
     public Material unselectedCaseMaterial, selectedCaseMaterial, movementCaseMaterial, blockCaseMaterial;
+    
+    private bool _gameEnded;
     
     private void Start()
     {
@@ -42,6 +45,8 @@ public class GameManager : MonoBehaviour
         }
         playerHealth.text = ("Health : " + Heroes[0].GetComponent<CharacterBehavior>().Life);
         actionPoints.text = 1.ToString();
+        victoryShowUp.enabled = false;
+        blurImage.enabled = false;
         LaunchGame();
     }
 
@@ -58,15 +63,13 @@ public class GameManager : MonoBehaviour
                 _goalCase.ShowBaseMaterial();
             }
             
-            _goalCase = newGoal;
-            Heroes[0].GetComponent<CharacterBehavior>().SetCanMove(_goalCase);
-            
-            if (Heroes[0].GetComponent<CharacterBehavior>().CheckCanMove(_goalCase))
+            if (Heroes[0].GetComponent<CharacterBehavior>().CheckCanMove(newGoal))
             {
+                _goalCase = newGoal;
                 _goalCase.GetComponent<MeshRenderer>().material = selectedCaseMaterial;
+                Heroes[0].GetComponent<CharacterBehavior>().SetCanMove(_goalCase);
+                actionPoints.text = 0.ToString();
             }
-
-            actionPoints.text = 0.ToString();
         }
     }
 
@@ -77,12 +80,15 @@ public class GameManager : MonoBehaviour
 
     public void EndTurn()
     {
+        Heroes[0].GetComponent<CharacterBehavior>().HideMovement();
+        EndTurnButton.GetComponent<Button>().interactable = false;
         if (_goalCase != Heroes[0].GetComponent<CharacterBehavior>().CharacterCase)
         {
-            Heroes[0].GetComponent<CharacterBehavior>().HideMovement();
-            EndTurnButton.GetComponent<Button>().interactable = false;
             Heroes[0].GetComponent<CharacterBehavior>().Move();
-            Heroes[0].GetComponent<Cinderella>().Attack(Enemies[0].GetComponent<CharacterBehavior>().CharacterCase, Enemies[0].GetComponent<CharacterBehavior>());
+        }
+        Heroes[0].GetComponent<Cinderella>().Attack(Enemies[0].GetComponent<CharacterBehavior>().CharacterCase, Enemies[0].GetComponent<CharacterBehavior>());
+        if (_gameEnded == false)
+        {
             StartCoroutine(PlayEnemyTurn());
         }
     }
@@ -101,7 +107,10 @@ public class GameManager : MonoBehaviour
         Enemies[0].GetComponent<CharacterBehavior>().Move();
         Enemies[0].GetComponent<CharacterBehavior>().Attack(Heroes[0].GetComponent<CharacterBehavior>().CharacterCase, Heroes[0].GetComponent<CharacterBehavior>());
         yield return new WaitForSeconds(1f);
-        PlayPlayerTurn();
+        if (_gameEnded == false)
+        {
+            PlayPlayerTurn();
+        }
     }
 
     public void EndGame(bool victory)
@@ -109,10 +118,18 @@ public class GameManager : MonoBehaviour
         if (victory)
         {
             print("Victory");
+            _gameEnded = true;
+            victoryShowUp.enabled = true;
+            blurImage.enabled = true;
+            victoryShowUp.GetComponent<TextMeshProUGUI>().text = "VICTORY";
         }
         else
         {
             print("Defeat");
+            _gameEnded = true;
+            victoryShowUp.enabled = true;
+            blurImage.enabled = true;
+            victoryShowUp.GetComponent<TextMeshProUGUI>().text = "DEFEAT";
         }
     }
 }

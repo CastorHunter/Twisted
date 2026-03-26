@@ -19,6 +19,7 @@ public class CharacterBehavior : MonoBehaviour
         if (Life <= 0)
         {
             GameManager.EndGame(true);
+            GetComponent<MeshRenderer>().enabled = false;
         }
     }
     
