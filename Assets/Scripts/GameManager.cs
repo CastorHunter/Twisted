@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
     public void SetNewGoal(Case newGoal)
     {
         PlayerGhost.SetActive(false);
+        AttackZone.transform.position = Heroes[0].transform.position;
         if (_goalCase != newGoal)
         {
             if (Heroes[0].GetComponent<CharacterBehavior>().CheckCanMove(_goalCase))
@@ -73,9 +74,13 @@ public class GameManager : MonoBehaviour
                 _goalCase = newGoal;
                 _goalCase.GetComponent<MeshRenderer>().material = selectedCaseMaterial;
                 PlayerGhost.SetActive(true);
-                if (_goalCase.Occupied !==  false)
+                if (_goalCase.Occupied ==  false)
                 {
                     AttackZone.transform.position = _goalCase.transform.position;
+                }
+                else
+                {
+                    AttackZone.transform.position = Heroes[0].transform.position;
                 }
                 PlayerGhost.transform.position = _goalCase.transform.position;
                 Heroes[0].GetComponent<CharacterBehavior>().SetCanMove(_goalCase);
