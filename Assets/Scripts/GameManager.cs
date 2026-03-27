@@ -9,8 +9,8 @@ public class GameManager : MonoBehaviour
     public BoardManager boardManager;
     [SerializeField] private List<GameObject> Heroes, Enemies;
 
-    [SerializeField] private GameObject EndTurnButton;
-    public TextMeshProUGUI playerHealth, enemyHealth, actionPoints, victoryShowUp;
+    [SerializeField] private GameObject EndTurnButton, PlayerGhost, AttackZone;
+    public TextMeshProUGUI playerHealth, enemyHealth, actionPoints, victoryShowUp, tip;
     [SerializeField] private Image blurImage;
     
     private Case _goalCase;
@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour
     {
         var board = boardManager.Cases;
         _goalCase = board[0]; //debug
-        
         if (Heroes.Count > 0)
         {
             foreach (GameObject character in Heroes) //debug
@@ -48,11 +47,16 @@ public class GameManager : MonoBehaviour
         actionPoints.text = 1.ToString();
         victoryShowUp.enabled = false;
         blurImage.enabled = false;
+        tip.enabled = false;
+        AttackZone.SetActive(false);
+        PlayerGhost.transform.position = Heroes[0].transform.position;
+        PlayerGhost.SetActive(false);
         LaunchGame();
     }
 
     public void SetNewGoal(Case newGoal)
     {
+        PlayerGhost.SetActive(false);
         if (_goalCase != newGoal)
         {
             if (Heroes[0].GetComponent<CharacterBehavior>().CheckCanMove(_goalCase))
@@ -68,8 +72,15 @@ public class GameManager : MonoBehaviour
             {
                 _goalCase = newGoal;
                 _goalCase.GetComponent<MeshRenderer>().material = selectedCaseMaterial;
+                PlayerGhost.SetActive(true);
+                if (_goalCase.Occupied !==  false)
+                {
+                    AttackZone.transform.position = _goalCase.transform.position;
+                }
+                PlayerGhost.transform.position = _goalCase.transform.position;
                 Heroes[0].GetComponent<CharacterBehavior>().SetCanMove(_goalCase);
                 actionPoints.text = 0.ToString();
+                tip.enabled = true;
             }
         }
         else
@@ -85,11 +96,15 @@ public class GameManager : MonoBehaviour
 
     public void EndTurn()
     {
+        AttackZone.SetActive(false);
+        PlayerGhost.SetActive(false);
         Heroes[0].GetComponent<CharacterBehavior>().HideMovement();
         EndTurnButton.GetComponent<Button>().interactable = false;
         if (_goalCase != Heroes[0].GetComponent<CharacterBehavior>().CharacterCase)
         {
             Heroes[0].GetComponent<CharacterBehavior>().Move();
+            PlayerGhost.transform.position = Heroes[0].transform.position;
+            AttackZone.transform.position = Heroes[0].transform.position;
         }
         Heroes[0].GetComponent<Cinderella>().Attack(Enemies[0].GetComponent<CharacterBehavior>().CharacterCase, Enemies[0].GetComponent<CharacterBehavior>());
         if (_gameEnded == false)
@@ -100,6 +115,7 @@ public class GameManager : MonoBehaviour
     
     private void PlayPlayerTurn()
     {
+        AttackZone.SetActive(true);
         actionPoints.text = 1.ToString();
         Heroes[0].GetComponent<CharacterBehavior>().ShowMovement();
         EndTurnButton.GetComponent<Button>().interactable = true;
@@ -107,6 +123,7 @@ public class GameManager : MonoBehaviour
     
     private IEnumerator PlayEnemyTurn()
     {
+        tip.enabled = false;
         yield return new WaitForSeconds(1f);
         Enemies[0].GetComponent<CharacterBehavior>().SetCanMove(Heroes[0].GetComponent<CharacterBehavior>().CharacterCase);
         Enemies[0].GetComponent<CharacterBehavior>().Move();
