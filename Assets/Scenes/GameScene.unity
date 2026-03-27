@@ -3746,7 +3746,7 @@ MonoBehaviour:
   _column: 1
   _row: 1
   Cost: 0
-  BlockPlayer: 1
+  BlockPlayer: 0
   Occupied: 0
   _gameManager: {fileID: 327982442}
   baseMaterial: {fileID: 2100000, guid: 6624f018c38ed9640b0ee910c4712e97, type: 2}
