@@ -72,6 +72,10 @@ public class GameManager : MonoBehaviour
                 actionPoints.text = 0.ToString();
             }
         }
+        else
+        {
+            _goalCase.GetComponent<MeshRenderer>().material = selectedCaseMaterial;
+        }
     }
 
     private void LaunchGame()
