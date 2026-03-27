@@ -28,13 +28,15 @@ public class GameManager : MonoBehaviour
             foreach (GameObject character in Heroes) //debug
             {
                 //Instantiate(character, new Vector3(0, 1, 0), Quaternion.identity);
-                character.GetComponent<CharacterBehavior>().CharacterCase = board[0];
+                character.GetComponent<CharacterBehavior>().CharacterCase = board[14];
+                character.transform.position = board[14].transform.position;
                 character.GetComponent<CharacterBehavior>().GameManager = this;
             }
             foreach (GameObject character in Enemies) //debug
             {
                 //Instantiate(character, new Vector3(0, 1, 0), Quaternion.identity);
-                character.GetComponent<CharacterBehavior>().CharacterCase = board[29];
+                character.GetComponent<CharacterBehavior>().CharacterCase = board[114];
+                character.transform.position = board[114].transform.position;
                 character.GetComponent<CharacterBehavior>().GameManager = this;
             }
         }
